@@ -1,10 +1,4 @@
 ---
-  #- name: Check disk configuration
-  #  ansible.builtin.debug:
-  #    msg: "{{ disk.controller_number }}"
-  #  loop: "{{ hostvars[item].disks }}"
-  #  loop_control:
-  #    loop_var: disk
   - name: Create a virtual machine in vCenter
     vmware_guest:
       validate_certs: "{{ hostvars[item].validate_certs }}"
@@ -28,25 +22,15 @@
       hardware:
         memory_mb: "{{ hostvars[item].memory_mb }}"
         num_cpus: "{{ hostvars[item].num_cpus }}"
-        #scsi: "{{ hostvars[item].disks[0].controller_type }}"
+        scsi: "{{ hostvars[item].disks[0].controller_type }}"
       networks:
       - name: "{{ hostvars[item].vcenter_network }}"
         device_type: "{{ hostvars[item].device_type }}"
       wait_for_ip_address: no
     delegate_to: localhost
-    #ignore_errors: true
     register: vm
-  #- name: Gather disk facts from virtual machine using UUID
-  #  vmware_guest_disk_info:
-  #    validate_certs: "{{ hostvars[item].validate_certs }}"
-  #    datacenter: "{{ hostvars[item].vcenter_datacenter }}"
-  #    name: "{{ vm.instance.hw_name }}"
-  #  delegate_to: localhost
-  #  register: disk_info
-  #- name: Check disk configuration
-  #  ansible.builtin.debug:
-  #    msg: "{{ disk_info }}"
-  #     msg: "{{ vm }}"
+  #idempotency issues are network related. See https://github.com/ansible/ansible/issues/38605
+  #using this method because vmware_guest doesn't support doing this until ansible version 2.10
   - name: Arrange disk controllers
     vmware_guest_disk:
       validate_certs: "{{ hostvars[item].validate_certs }}"
@@ -91,7 +75,6 @@
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
       keys_send:
-        #- ENTER
-        - SPACE
+        - ENTER
     delegate_to: localhost
     when: vm.changed

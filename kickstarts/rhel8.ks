@@ -48,12 +48,6 @@ logvol swap --fstype="ext4" --size=1024 --vgname=vg_root --name=lv_swap
 rootpw --iscrypted $6$W/5DZFxvavCS4LUN$Tqr.HN/A.SPmcBqx5Ffz8ckQzVpvWF9O4Mfw8JSextesaGD11Sfgx7LsS4sVx4c/rYkTYGP73uZMrejwbJFEb.
 user --name=provision --iscrypted --password $6$ImAZNMg6uWumzMzk$q.ujkqkB4wS9EPzItLyOTjwY0TNTWr3MKuzlOlhcwB8KCgojZaXbDsdROycKiWJJBIswYIaAvtWyNsqwNljbK1
 
-#url --url="http://mirror.centos.org/centos/7/os/x86_64/"
-#url --url="http://dev.spiehlerfamily.com/centos/7/os/x86_64/"
-
-#url --url="http://lcuccssiemconn.lcmchealth.org/rhel/8/os/x86_64/"
-#repo --name="AppStream" --baseurl="http://lcuccssiemconn.lcmchealth.org/rhel/8/os/x86_64/AppStream"
-
 %packages
 @core
 %end
