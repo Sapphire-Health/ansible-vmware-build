@@ -77,4 +77,6 @@
       keys_send:
         - ENTER
     delegate_to: localhost
-    when: vm.changed
+    when:
+      - vm.changed
+      - hostvars[item].debug|default(False) != true
