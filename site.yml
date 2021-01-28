@@ -4,6 +4,7 @@
     gather_facts: false
     vars:
       match_host: all
+      build: default
     tasks:
       - name: Build VMs
         include_role:

@@ -1,3 +1,3 @@
 ---
   - name: Run required task
-    include_tasks: "{{ role_path }}/tasks/{{ hostvars[item].build }}.yml"
+    include_tasks: "{{ role_path }}/tasks/{{ build }}.yml"
