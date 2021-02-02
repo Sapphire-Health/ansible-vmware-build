@@ -67,7 +67,7 @@
     vmware_guest_sendkey:
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
-      string_send: "vmlinuz initrd=initrd.img ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }} }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ hostvars[item].ksurl }} {{ hostvars[item].extra_kernel_args }}"
+      string_send: "vmlinuz initrd=initrd.img ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ hostvars[item].ksurl }} {{ hostvars[item].extra_kernel_args }}"
     delegate_to: localhost
     when: vm.changed
   - name: Send Keystrokes
