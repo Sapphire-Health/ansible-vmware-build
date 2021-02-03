@@ -23,6 +23,7 @@
         memory_mb: "{{ hostvars[item].memory_mb }}"
         num_cpus: "{{ hostvars[item].num_cpus }}"
         scsi: "{{ hostvars[item].disks[0].controller_type }}"
+        boot_firmware: "{{ hostvars[item].boot_firmware | default('bios') }}"
       networks:
       - name: "{{ hostvars[item].vcenter_network }}"
         device_type: "{{ hostvars[item].device_type }}"
@@ -60,16 +61,70 @@
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
       keys_send:
-        - ESC
+        - "{{ 'ESC' if hostvars[item].boot_firmware is not defined or hostvars[item].boot_firmware == 'bios' else 'c' }}"
     delegate_to: localhost
     when: vm.changed
-  - name: Send Keystrokes
+  - name: Send BIOS Keystrokes
     vmware_guest_sendkey:
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
       string_send: "vmlinuz initrd=initrd.img ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ hostvars[item].ksurl }} {{ hostvars[item].extra_kernel_args }}"
     delegate_to: localhost
-    when: vm.changed
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is not defined or hostvars[item].boot_firmware == 'bios'
+  - name: Send EFI Keystrokes
+    vmware_guest_sendkey:
+      validate_certs: "{{ hostvars[item].validate_certs }}"
+      name: "{{ vm.instance.hw_name }}"
+      string_send: "linuxefi /images/pxeboot/vmlinuz ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ hostvars[item].ksurl }} {{ hostvars[item].extra_kernel_args }}"
+    delegate_to: localhost
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is defined
+      - hostvars[item].boot_firmware == 'efi'
+  - name: Send EFI Keystrokes
+    vmware_guest_sendkey:
+      validate_certs: "{{ hostvars[item].validate_certs }}"
+      name: "{{ vm.instance.hw_name }}"
+      keys_send:
+        - ENTER
+    delegate_to: localhost
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is defined
+      - hostvars[item].boot_firmware == 'efi'
+  - name: Send EFI Keystrokes
+    vmware_guest_sendkey:
+      validate_certs: "{{ hostvars[item].validate_certs }}"
+      name: "{{ vm.instance.hw_name }}"
+      string_send: "initrdefi /images/pxeboot/initrd.img"
+    delegate_to: localhost
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is defined
+      - hostvars[item].boot_firmware == 'efi'
+  - name: Send EFI Keystrokes
+    vmware_guest_sendkey:
+      validate_certs: "{{ hostvars[item].validate_certs }}"
+      name: "{{ vm.instance.hw_name }}"
+      keys_send:
+        - ENTER
+    delegate_to: localhost
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is defined
+      - hostvars[item].boot_firmware == 'efi'
+  - name: Send EFI Keystrokes
+    vmware_guest_sendkey:
+      validate_certs: "{{ hostvars[item].validate_certs }}"
+      name: "{{ vm.instance.hw_name }}"
+      string_send: "boot"
+    delegate_to: localhost
+    when:
+      - vm.changed
+      - hostvars[item].boot_firmware is defined
+      - hostvars[item].boot_firmware == 'efi'
   - name: Send Keystrokes
     vmware_guest_sendkey:
       validate_certs: "{{ hostvars[item].validate_certs }}"
