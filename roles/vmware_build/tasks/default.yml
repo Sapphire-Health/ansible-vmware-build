@@ -1,7 +1,7 @@
 ---
   - name: Build a kickstart file
     uri:
-      url: "http://dev.spiehlerfamily.com/ks/rhel8.php"
+      url: "http://dev.spiehlerfamily.com/ks/rhel.php"
       method: POST
       headers:
         accept: test/plain
