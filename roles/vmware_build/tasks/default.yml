@@ -6,12 +6,13 @@
       headers:
         accept: test/plain
       body_format: json
+      follow_redirects: safe
       body: "{{ hostvars[item] }}"
-      status_code: 200
+      status_code: 302
     register: ksresp
   - name: Kickstart URL
     ansible.builtin.debug:
-      msg: "http://dev.spiehlerfamily.com/ks{{ ksresp.link }}"
+      msg: "{{ ksresp }}"
   - name: Create a virtual machine in vCenter
     vmware_guest:
       validate_certs: "{{ hostvars[item].validate_certs }}"
@@ -81,7 +82,7 @@
     vmware_guest_sendkey:
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
-      string_send: "vmlinuz initrd=initrd.img ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks=http://dev.spiehlerfamily.com/ks{{ ksresp.link }} {{ hostvars[item].extra_kernel_args }}"
+      string_send: "vmlinuz initrd=initrd.img ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ ksresp.location }} {{ hostvars[item].extra_kernel_args }}"
     delegate_to: localhost
     when:
       - vm.changed
@@ -90,7 +91,7 @@
     vmware_guest_sendkey:
       validate_certs: "{{ hostvars[item].validate_certs }}"
       name: "{{ vm.instance.hw_name }}"
-      string_send: "linuxefi /images/pxeboot/vmlinuz ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks=http://dev.spiehlerfamily.com/ks{{ ksresp.link }} {{ hostvars[item].extra_kernel_args }}"
+      string_send: "linuxefi /images/pxeboot/vmlinuz ip={{ hostvars[item].ansible_host }}::{{ hostvars[item].gateway }}:{{ hostvars[item].netmask }}:{{ hostvars[item].fqdn | default(item) }}:{{ hostvars[item].iface }}:none nameserver={{ hostvars[item].dns1 }} nameserver={{ hostvars[item].dns2 }} inst.ks={{ ksresp.location }} {{ hostvars[item].extra_kernel_args }}"
     delegate_to: localhost
     when:
       - vm.changed
