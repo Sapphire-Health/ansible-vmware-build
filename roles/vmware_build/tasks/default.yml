@@ -8,7 +8,7 @@
       body_format: json
       follow_redirects: safe
       body: "{{ hostvars[item] }}"
-      status_code: 302
+      status_code: 201
     register: ksresp
   - name: Kickstart URL
     ansible.builtin.debug:
