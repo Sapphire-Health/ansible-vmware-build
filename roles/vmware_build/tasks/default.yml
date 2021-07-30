@@ -15,6 +15,7 @@
       msg: "{{ ksresp }}"
   - name: Create a virtual machine in vCenter
     vmware_guest:
+      annotation: "{{ hostvars[item].annotation | default('') }}"
       validate_certs: "{{ hostvars[item].validate_certs }}"
       datacenter: "{{ hostvars[item].vcenter_datacenter }}"
       folder: "{{ hostvars[item].vcenter_folder }}"
