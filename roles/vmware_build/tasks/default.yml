@@ -9,7 +9,7 @@
       validate_certs: no
       follow_redirects: safe
       body: "{{ hostvars[item] }}"
-      status_code: 201
+      status_code: [200, 201, 302, 303]
     register: ksresp
   - name: Kickstart URL
     ansible.builtin.debug:
