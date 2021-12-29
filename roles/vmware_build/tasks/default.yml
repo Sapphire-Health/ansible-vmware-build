@@ -6,6 +6,7 @@
       headers:
         accept: test/plain
       body_format: json
+      validate_certs: no
       follow_redirects: safe
       body: "{{ hostvars[item] }}"
       status_code: 201
