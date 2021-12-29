@@ -6,10 +6,10 @@
       headers:
         accept: test/plain
       body_format: json
-      validate_certs: no
+      validate_certs: yes
       follow_redirects: safe
       body: "{{ hostvars[item] }}"
-      status_code: [200, 201, 302, 303]
+      status_code: [200, 201, 302]
     register: ksresp
   - name: Kickstart URL
     ansible.builtin.debug:
